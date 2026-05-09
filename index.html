@@ -6,93 +6,187 @@
     <title>Our Pink Memories</title>
     <style>
         body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
-            color: #5d4037; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            color: #5d4037;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%23d81b60"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'), auto;
         }
 
-        /* Tombol Pemicu (Wajib untuk HP) */
-        #overlay {
-            background: white; padding: 30px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;
-            width: 80%; max-width: 350px; z-index: 1000;
+        /* Navigasi */
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(216, 27, 96, 0.1);
         }
 
-        .btn-start {
-            background: #d81b60; color: white; border: none;
-            padding: 15px 30px; border-radius: 50px; font-weight: bold;
-            font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%;
+        nav a {
+            color: rgba(93, 64, 55, 0.8);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: 0.3s;
         }
 
-        /* Konten Utama */
-        #main-content { display: none; width: 100%; text-align: center; padding: 20px; }
-        
+        nav a.active {
+            color: #d81b60;
+            font-weight: bold;
+            border-bottom: 2px solid #d81b60;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Counter */
         .counter-container {
-            background: white; padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin: 20px auto;
-            max-width: 400px; border: 2px dashed #ffafbd;
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 30px 0;
+            border: 2px dashed #ffafbd;
+        }
+        .counter-time { font-size: 22px; font-weight: bold; color: #d81b60; margin-top: 10px; }
+
+        /* Music Player Float */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .music-btn {
+            background: #d81b60; color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; font-size: 16px; transition: 0.3s;
         }
 
-        .click-heart { position: absolute; color: #d81b60; font-size: 20px; pointer-events: none; animation: heartFloat 1s ease-out forwards; }
-        @keyframes heartFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
+        /* Hearts */
+        .click-heart { position: absolute; color: #d81b60; font-size: 20px; user-select: none; pointer-events: none; animation: heartFloat 1s ease-out forwards; z-index: 9999; }
+        @keyframes heartFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(1.5); opacity: 0; } }
     </style>
 </head>
-<body onclick="spawnHeart(event)">
+<body onclick="handleFirstClick(event)">
 
-    <!-- TAMPILAN AWAL (MEMANCING AUDIO) -->
-    <div id="overlay">
-        <h2 style="color: #d81b60; margin-top: 0;">Halo Sayang 🌸</h2>
-        <p style="color: #666; font-size: 14px;">Klik tombol di bawah untuk memutar lagu dan melihat kenangan kita.</p>
-        <button class="btn-start" onclick="jalankanWeb()">Mulai Sekarang ✨</button>
+    <!-- MUSIC PLAYER -->
+    <div class="music-player">
+        <button class="music-btn" id="play-pause" onclick="toggleMusic(event)">▶</button>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 11px; color: #888;">Now Playing</span>
+            <span style="font-size: 13px; font-weight: bold;">Aku Milikmu - Dewa 19</span>
+        </div>
+        <audio id="myAudio" loop preload="auto">
+            <source src="akumilikmu.mp3" type="audio/mpeg">
+        </audio>
     </div>
 
-    <!-- KONTEN UTAMA -->
-    <div id="main-content">
-        <h2 style="color: white; text-shadow: 2px 2px 5px rgba(0,0,0,0.1);">Welcome Home 🌸</h2>
-        <div class="counter-container">
-            <p style="margin: 0; font-size: 14px; color: #888;">Waktu Bersama:</p>
-            <div id="days-counter" style="font-size: 22px; font-weight: bold; color: #d81b60;">...</div>
+    <nav>
+        <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+        <a onclick="showPage('memories')" id="nav-memories">Memories</a>
+        <a onclick="showPage('message')" id="nav-message">Message</a>
+    </nav>
+
+    <div class="container">
+        <!-- HOME PAGE -->
+        <div id="home" class="page active-page">
+            <h2 style="text-align: center; color: #ad1457;">Welcome Home 🌸</h2>
+            <div class="counter-container">
+                <p style="margin: 0; font-size: 14px; color: #888;">Waktu Bersama:</p>
+                <div id="days-counter" class="counter-time">Loading...</div>
+            </div>
         </div>
-        <p style="color: white;">Lagu: Aku Milikmu - Dewa 19</p>
-        
-        <!-- Iframe YouTube Tersembunyi -->
-        <div id="player"></div>
+
+        <div id="memories" class="page">
+            <h2 style="text-align: center; color: #ad1457;">🌸 Our Memories 🌸</h2>
+            <p style="text-align: center;">Halaman kenangan kita...</p>
+        </div>
+
+        <div id="message" class="page">
+            <h2 style="text-align: center; color: #ad1457;">💌 Message Board 💌</h2>
+            <p style="text-align: center;">Tulis pesanmu di sini...</p>
+        </div>
     </div>
 
     <script>
-        // Load YouTube API
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        const audio = document.getElementById("myAudio");
+        const btn = document.getElementById("play-pause");
+        let isStarted = false;
 
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                videoId: 'gT9g1cW1H-4', // ID Lagu Aku Milikmu
-                playerVars: {
-                    'autoplay': 1,
-                    'loop': 1,
-                    'playlist': 'gT9g1cW1H-4'
-                }
-            });
+        // Fungsi pemicu utama (Autoplay)
+        function handleFirstClick(e) {
+            spawnHeart(e); // Efek hati
+            startMusic();
         }
 
-        function jalankanWeb() {
-            // Sembunyikan tombol, munculkan isi web
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            document.body.style.display = 'block';
-
-            // Putar Video
-            if (player) {
-                player.playVideo();
+        function startMusic() {
+            if (!isStarted) {
+                audio.play().then(() => {
+                    btn.innerHTML = "⏸";
+                    isStarted = true;
+                }).catch(error => {
+                    console.log("Menunggu interaksi pengguna untuk memutar musik...");
+                });
             }
+        }
 
-            updateCounter();
+        function showPage(pageId) {
+            // Memastikan musik jalan saat pindah menu
+            startMusic();
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active-page');
+            document.getElementById('nav-' + pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function toggleMusic(e) {
+            e.stopPropagation(); // Mencegah pemicu double dari handleFirstClick
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = "⏸";
+                isStarted = true;
+            } else {
+                audio.pause();
+                btn.innerHTML = "▶";
+            }
         }
 
         function spawnHeart(e) {
@@ -107,12 +201,12 @@
 
         function updateCounter() {
             const startDate = new Date("2024-01-01"); 
-            setInterval(() => {
-                const diff = new Date() - startDate;
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                document.getElementById("days-counter").innerHTML = `${d} Hari Bersama`;
-            }, 1000);
+            const diff = new Date() - startDate;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById("days-counter").innerHTML = `${d} Hari Bersama`;
         }
+        setInterval(updateCounter, 1000);
+        updateCounter();
     </script>
 </body>
 </html>
