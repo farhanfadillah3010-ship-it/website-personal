@@ -144,69 +144,38 @@
         </div>
     </div>
 
-    <script>
-        const audio = document.getElementById("myAudio");
-        const btn = document.getElementById("play-pause");
-        let isStarted = false;
+<script>
+    const audio = document.getElementById("myAudio");
+    const btn = document.getElementById("play-pause");
 
-        // Fungsi pemicu utama (Autoplay)
-        function handleFirstClick(e) {
-            spawnHeart(e); // Efek hati
-            startMusic();
+    // Cek apakah file lagu ditemukan
+    audio.onerror = function() {
+        alert("File lagu 'akumilikmu.mp3' tidak ditemukan. Pastikan nama file di GitHub sudah benar!");
+    };
+
+    function startMusic() {
+        audio.play().then(() => {
+            btn.innerHTML = "⏸";
+        }).catch(err => {
+            console.log("Menunggu klik pengguna...");
+        });
+    }
+
+    // Paksa jalan saat klik mana saja
+    document.body.addEventListener('click', function() {
+        startMusic();
+    }, { once: true });
+
+    function toggleMusic(e) {
+        if (e) e.stopPropagation();
+        if (audio.paused) {
+            audio.play();
+            btn.innerHTML = "⏸";
+        } else {
+            audio.pause();
+            btn.innerHTML = "▶";
         }
-
-        function startMusic() {
-            if (!isStarted) {
-                audio.play().then(() => {
-                    btn.innerHTML = "⏸";
-                    isStarted = true;
-                }).catch(error => {
-                    console.log("Menunggu interaksi pengguna untuk memutar musik...");
-                });
-            }
-        }
-
-        function showPage(pageId) {
-            // Memastikan musik jalan saat pindah menu
-            startMusic();
-
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active-page');
-            document.getElementById('nav-' + pageId).classList.add('active');
-            window.scrollTo(0, 0);
-        }
-
-        function toggleMusic(e) {
-            e.stopPropagation(); // Mencegah pemicu double dari handleFirstClick
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = "⏸";
-                isStarted = true;
-            } else {
-                audio.pause();
-                btn.innerHTML = "▶";
-            }
-        }
-
-        function spawnHeart(e) {
-            const heart = document.createElement('div');
-            heart.className = 'click-heart';
-            heart.innerHTML = '❤️';
-            heart.style.left = e.pageX + 'px';
-            heart.style.top = e.pageY + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 1000);
-        }
-
-        function updateCounter() {
-            const startDate = new Date("2024-01-01"); 
-            const diff = new Date() - startDate;
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            document.getElementById("days-counter").innerHTML = `${d} Hari Bersama`;
-        }
-        setInterval(updateCounter, 1000);
-        updateCounter();
-    </script>
+    }
+</script>
 </body>
 </html>
