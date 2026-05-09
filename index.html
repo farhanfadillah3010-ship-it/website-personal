@@ -107,12 +107,12 @@
 
     <!-- MUSIC PLAYER -->
     <div class="music-player">
-        <button class="music-btn" id="play-pause" onclick="toggleMusic()">▶</button>
+        <button class="music-btn" id="play-pause" onclick="toggleMusic(event)">▶</button>
         <div style="display: flex; flex-direction: column;">
             <span style="font-size: 11px; color: #888;">Now Playing</span>
             <span style="font-size: 13px; font-weight: bold;">Aku Milikmu - Dewa 19</span>
         </div>
-        <audio id="myAudio" loop>
+        <audio id="myAudio" loop preload="auto">
             <source src="akumilikmu.mp3" type="audio/mpeg">
         </audio>
     </div>
@@ -133,7 +133,6 @@
             </div>
         </div>
 
-        <!-- PAGE LAIN (Memories & Message) -->
         <div id="memories" class="page">
             <h2 style="text-align: center; color: #ad1457;">🌸 Our Memories 🌸</h2>
             <p style="text-align: center;">Halaman kenangan kita...</p>
@@ -150,24 +149,26 @@
         const btn = document.getElementById("play-pause");
         let isStarted = false;
 
-        // Fungsi pemicu saat klik pertama (Autoplay)
+        // Fungsi pemicu utama (Autoplay)
         function handleFirstClick(e) {
             spawnHeart(e); // Efek hati
+            startMusic();
+        }
+
+        function startMusic() {
             if (!isStarted) {
                 audio.play().then(() => {
                     btn.innerHTML = "⏸";
                     isStarted = true;
-                }).catch(error => console.log("Menunggu interaksi..."));
+                }).catch(error => {
+                    console.log("Menunggu interaksi pengguna untuk memutar musik...");
+                });
             }
         }
 
         function showPage(pageId) {
-            // Pemicu musik jika belum jalan saat pindah halaman
-            if (!isStarted) {
-                audio.play();
-                btn.innerHTML = "⏸";
-                isStarted = true;
-            }
+            // Memastikan musik jalan saat pindah menu
+            startMusic();
 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -176,10 +177,12 @@
             window.scrollTo(0, 0);
         }
 
-        function toggleMusic() {
+        function toggleMusic(e) {
+            e.stopPropagation(); // Mencegah pemicu double dari handleFirstClick
             if (audio.paused) {
                 audio.play();
                 btn.innerHTML = "⏸";
+                isStarted = true;
             } else {
                 audio.pause();
                 btn.innerHTML = "▶";
@@ -196,7 +199,6 @@
             setTimeout(() => heart.remove(), 1000);
         }
 
-        // Counter Waktu (Ganti tanggal jadian kamu di sini)
         function updateCounter() {
             const startDate = new Date("2024-01-01"); 
             const diff = new Date() - startDate;
