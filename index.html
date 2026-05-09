@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Pink Memories</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            color: #5d4037; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Tombol Pemicu (Wajib untuk HP) */
+        #overlay {
+            background: white; padding: 30px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;
+            width: 80%; max-width: 350px; z-index: 1000;
+        }
+
+        .btn-start {
+            background: #d81b60; color: white; border: none;
+            padding: 15px 30px; border-radius: 50px; font-weight: bold;
+            font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%;
+        }
+
+        /* Konten Utama */
+        #main-content { display: none; width: 100%; text-align: center; padding: 20px; }
+        
+        .counter-container {
+            background: white; padding: 25px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin: 20px auto;
+            max-width: 400px; border: 2px dashed #ffafbd;
+        }
+
+        .click-heart { position: absolute; color: #d81b60; font-size: 20px; pointer-events: none; animation: heartFloat 1s ease-out forwards; }
+        @keyframes heartFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
+    </style>
+</head>
+<body onclick="spawnHeart(event)">
+
+    <!-- TAMPILAN AWAL (MEMANCING AUDIO) -->
+    <div id="overlay">
+        <h2 style="color: #d81b60; margin-top: 0;">Halo Sayang 🌸</h2>
+        <p style="color: #666; font-size: 14px;">Klik tombol di bawah untuk memutar lagu dan melihat kenangan kita.</p>
+        <button class="btn-start" onclick="jalankanWeb()">Mulai Sekarang ✨</button>
+    </div>
+
+    <!-- KONTEN UTAMA -->
+    <div id="main-content">
+        <h2 style="color: white; text-shadow: 2px 2px 5px rgba(0,0,0,0.1);">Welcome Home 🌸</h2>
+        <div class="counter-container">
+            <p style="margin: 0; font-size: 14px; color: #888;">Waktu Bersama:</p>
+            <div id="days-counter" style="font-size: 22px; font-weight: bold; color: #d81b60;">...</div>
+        </div>
+        <p style="color: white;">Lagu: Aku Milikmu - Dewa 19</p>
+        
+        <!-- Iframe YouTube Tersembunyi -->
+        <div id="player"></div>
+    </div>
+
+    <script>
+        // Load YouTube API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: 'gT9g1cW1H-4', // ID Lagu Aku Milikmu
+                playerVars: {
+                    'autoplay': 1,
+                    'loop': 1,
+                    'playlist': 'gT9g1cW1H-4'
+                }
+            });
+        }
+
+        function jalankanWeb() {
+            // Sembunyikan tombol, munculkan isi web
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            document.body.style.display = 'block';
+
+            // Putar Video
+            if (player) {
+                player.playVideo();
+            }
+
+            updateCounter();
+        }
+
+        function spawnHeart(e) {
+            const heart = document.createElement('div');
+            heart.className = 'click-heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = e.pageX + 'px';
+            heart.style.top = e.pageY + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1000);
+        }
+
+        function updateCounter() {
+            const startDate = new Date("2024-01-01"); 
+            setInterval(() => {
+                const diff = new Date() - startDate;
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                document.getElementById("days-counter").innerHTML = `${d} Hari Bersama`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
