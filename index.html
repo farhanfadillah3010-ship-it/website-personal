@@ -1,97 +1,39 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Pink Memories</title>
-    <style>
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* BOX PEMICU */
-        #welcome-overlay {
-            background: white; padding: 40px; border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
-            width: 85%; max-width: 400px;
-        }
-
-        .btn-start {
-            background: #d81b60; color: white; border: none;
-            padding: 15px 30px; border-radius: 50px; font-size: 16px;
-            font-weight: bold; cursor: pointer; margin-top: 25px;
-            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
-            transition: 0.3s;
-        }
-
-        /* KONTEN UTAMA (Tersembunyi di awal) */
-        #main-app { display: none; text-align: center; }
-        .counter-box {
-            background: white; padding: 20px; border-radius: 20px;
-            border: 2px dashed #ffafbd; margin-top: 20px;
-        }
-    </style>
+    <title>Test Tombol</title>
 </head>
-<body>
+<body style="background: pink; text-align: center; padding-top: 50px;">
 
-    <!-- BOX AWAL DENGAN TOMBOL -->
-    <div id="welcome-overlay">
-    <h2 style="color: #d81b60;">Selamat Datang! 🌸</h2>
-    <p style="color: #666;">Klik tombol di bawah ini untuk melihat kenangan kita & mendengarkan lagu.</p>
-    <button class="btn-start" onclick="startApp()">Mulai Sekarang ✨</button>
-</div>
+    <h2>Klik untuk Putar Lagu 🌸</h2>
+    <button id="btnMulai" style="padding: 20px; font-size: 20px; border-radius: 10px;">
+        Mulai Sekarang ✨
+    </button>
 
-    <!-- KONTEN UTAMA -->
-    <div id="main-app">
-        <h1 style="color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.2);">Our Memories</h1>
-        <div class="counter-box">
-            <p style="margin: 0; color: #888;">Waktu Bersama:</p>
-            <div id="days-counter" style="font-size: 26px; font-weight: bold; color: #d81b60;">...</div>
-        </div>
-        <p style="color: white; margin-top: 20px;">Semoga hari-harimu bahagia! 💖</p>
-    </div>
-
-    <!-- PLAYER YOUTUBE (Tersembunyi) -->
-    <div id="player-container"></div>
+    <div id="player"></div>
 
     <script>
-        // Load YouTube API
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         document.body.appendChild(tag);
 
         var player;
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player-container', {
+            player = new YT.Player('player', {
                 height: '0', width: '0',
-                videoId: 'gT9g1cW1H-4', // ID Lagu Aku Milikmu
+                videoId: 'gT9g1cW1H-4',
                 playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'gT9g1cW1H-4' }
             });
         }
 
-        function startApp() {
-            // Sembunyikan box sambutan
-            document.getElementById('welcome-overlay').style.display = 'none';
-            // Tampilkan isi website
-            document.getElementById('main-app').style.display = 'block';
-            
-            // Putar musik
-            if (player) { player.playVideo(); }
-            
-            // Mulai counter
-            setInterval(updateCounter, 1000);
-            updateCounter();
-        }
-
-        function updateCounter() {
-            const startDate = new Date("2024-01-01"); // Ganti tanggal jadianmu
-            const diff = new Date() - startDate;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            document.getElementById('days-counter').innerHTML = days + " Hari Bersama";
-        }
+        document.getElementById('btnMulai').onclick = function() {
+            if(player) {
+                player.playVideo();
+                alert("Lagu Harusnya Sudah Mulai!");
+                this.style.display = 'none';
+            }
+        };
     </script>
 </body>
 </html>
