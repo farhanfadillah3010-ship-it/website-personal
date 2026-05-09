@@ -7,147 +7,91 @@
     <style>
         body {
             margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
-            color: #5d4037; min-height: 100vh; overflow-x: hidden;
+            min-height: 100vh; text-align: center; color: #5d4037;
         }
 
         /* Navigasi */
         nav {
-            display: flex; justify-content: center; padding: 20px 0; gap: 25px;
+            display: flex; justify-content: center; padding: 15px 0; gap: 20px;
             background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        nav a {
-            color: rgba(93, 64, 55, 0.8); text-decoration: none;
-            font-size: 16px; font-weight: 500; cursor: pointer;
+        nav a { color: #5d4037; text-decoration: none; font-weight: 500; cursor: pointer; }
+
+        /* Welcome Overlay (Pemicu Musik) */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 175, 189, 0.95);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 9999; transition: 0.5s;
         }
 
-        nav a.active { color: #d81b60; font-weight: bold; border-bottom: 2px solid #d81b60; }
+        .play-btn {
+            background: #d81b60; color: white; border: none;
+            padding: 15px 30px; border-radius: 50px; font-size: 18px;
+            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.4); cursor: pointer;
+        }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-
-        /* Counter Box */
         .counter-container {
-            background: white; padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin: 30px 0;
-            border: 2px dashed #ffafbd;
+            background: white; padding: 25px; border-radius: 20px;
+            margin: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
-        .counter-time { font-size: 22px; font-weight: bold; color: #d81b60; margin-top: 10px; }
-
-        /* Floating Music Info */
-        .music-player {
-            position: fixed; bottom: 20px; right: 20px; z-index: 2000;
-            background: white; padding: 10px 20px; border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
-        }
-
-        /* Efek Hati */
-        .click-heart { position: absolute; color: #d81b60; font-size: 20px; pointer-events: none; animation: heartFloat 1s ease-out forwards; }
-        @keyframes heartFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
     </style>
 </head>
-<body onclick="playMusic()">
+<body>
 
-    <!-- YOUTUBE PLAYER (Tersembunyi) -->
-    <!-- ID 'gT9g1cW1H-4' adalah lagu Aku Milikmu - Dewa 19 -->
-    <div id="youtube-container" style="display:none;">
+    <!-- TOMBOL PEMICU (WAJIB UNTUK HP) -->
+    <div id="overlay">
+        <h2 style="color: white; margin-bottom: 20px;">Welcome Home 🌸</h2>
+        <button class="play-btn" onclick="startEverything()">Mulai Kenangan ✨</button>
+    </div>
+
+    <!-- PLAYER YOUTUBE TERSEMBUNYI -->
+    <div id="youtube-player" style="display:none;">
         <div id="player"></div>
     </div>
 
-    <!-- TAMPILAN PEMUTAR MUSIK -->
-    <div class="music-player">
-        <div style="font-size: 20px;">🎵</div>
-        <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <span style="font-size: 10px; color: #888;">Now Playing</span>
-            <span style="font-size: 13px; font-weight: bold; color: #d81b60;">Aku Milikmu - Dewa 19</span>
-        </div>
-    </div>
-
     <nav>
-        <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
-        <a onclick="showPage('memories')" id="nav-memories">Memories</a>
-        <a onclick="showPage('message')" id="nav-message">Message</a>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('memories')">Memories</a>
     </nav>
 
     <div class="container">
-        <div id="home" class="page active-page">
-            <h2 style="color: #ad1457;">Welcome Home 🌸</h2>
+        <div id="home" class="page">
             <div class="counter-container">
-                <p style="margin: 0; font-size: 14px; color: #888;">Waktu Bersama:</p>
-                <div id="days-counter" class="counter-time">Loading...</div>
+                <p>Waktu Bersama:</p>
+                <div id="days-counter" style="font-size: 22px; font-weight: bold; color: #d81b60;">Loading...</div>
             </div>
-            <p style="font-size: 12px; color: #d81b60;">(Ketuk di mana saja untuk memutar musik ✨)</p>
-        </div>
-
-        <div id="memories" class="page" style="display:none;">
-            <h2 style="color: #ad1457;">🌸 Our Memories 🌸</h2>
-            <p>Halaman kenangan kita...</p>
-        </div>
-
-        <div id="message" class="page" style="display:none;">
-            <h2 style="color: #ad1457;">💌 Message Board 💌</h2>
-            <p>Tulis pesanmu di sini...</p>
         </div>
     </div>
 
     <script>
-        // 1. Load YouTube IFrame Player API
+        // Load YouTube API
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        document.body.appendChild(tag);
 
         var player;
-        var musicStarted = false;
-
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '0',
-                width: '0',
+                height: '0', width: '0',
                 videoId: 'gT9g1cW1H-4', // ID Lagu Aku Milikmu
-                playerVars: {
-                    'autoplay': 1,
-                    'loop': 1,
-                    'playlist': 'gT9g1cW1H-4'
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
+                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'gT9g1cW1H-4' }
             });
         }
 
-        function onPlayerReady(event) {
-            // Player siap, tapi menunggu klik pertama pengguna
-        }
-
-        // Fungsi pemicu musik (Autoplay lewat interaksi)
-        function playMusic() {
-            if (player && !musicStarted) {
-                player.playVideo();
-                musicStarted = true;
-            }
-            // Munculkan efek hati
-            spawnHeart(event);
-        }
-
-        function showPage(pageId) {
-            playMusic(); // Pastikan musik jalan saat menu diklik
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById(pageId).style.display = 'block';
-            document.getElementById('nav-' + pageId).classList.add('active');
-        }
-
-        function spawnHeart(e) {
-            const heart = document.createElement('div');
-            heart.className = 'click-heart';
-            heart.innerHTML = '❤️';
-            heart.style.left = e.pageX + 'px';
-            heart.style.top = e.pageY + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 1000);
+        function startEverything() {
+            // Hilangkan overlay
+            document.getElementById('overlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 500);
+            
+            // Putar Musik
+            if (player) { player.playVideo(); }
+            
+            updateCounter();
         }
 
         function updateCounter() {
@@ -157,7 +101,6 @@
             document.getElementById("days-counter").innerHTML = `${d} Hari Bersama`;
         }
         setInterval(updateCounter, 1000);
-        updateCounter();
     </script>
 </body>
 </html>
