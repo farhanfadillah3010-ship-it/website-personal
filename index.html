@@ -10,7 +10,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
             color: #5d4037; min-height: 100vh; overflow-x: hidden;
-            padding-bottom: 90px;
+            padding-bottom: 80px; /* Jarak agar tidak tertutup player di bawah */
         }
 
         /* Navigasi */
@@ -54,89 +54,46 @@
         }
         .card-foto img { width: 100%; border-radius: 18px; display: block; }
 
-        /* Gallery Grid (2 Kolom) */
+        /* Gallery Grid */
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
         .gallery-item { background: white; padding: 8px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .gallery-item img { width: 100%; border-radius: 10px; display: block; }
 
-        /* Form Message Board Baru & Estetik */
+        /* Form Message Board */
         .message-form {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 25px; border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.1);
-            margin-bottom: 30px;
-            display: flex; flex-direction: column; gap: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(5px);
+            background: white; padding: 20px; border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin-bottom: 20px;
+            display: flex; flex-direction: column; gap: 10px;
         }
         .message-form input, .message-form textarea {
-            width: 100%; padding: 14px; border: 2px solid #ffe3e8;
-            border-radius: 16px; font-family: inherit; font-size: 14px;
-            outline: none; box-sizing: border-box; transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-        }
-        .message-form input:focus, .message-form textarea:focus {
-            border-color: #ffafbd;
-            background: white;
-            box-shadow: 0 0 10px rgba(255, 175, 189, 0.5);
+            width: 100%; padding: 12px; border: 1px solid #ffafbd;
+            border-radius: 12px; font-family: inherit; font-size: 14px;
+            outline: none; box-sizing: border-box;
         }
         .btn-kirim {
-            background: linear-gradient(135deg, #d81b60 0%, #ff4081 100%);
-            color: white; border: none; padding: 14px;
-            border-radius: 16px; font-weight: bold; font-size: 15px;
-            cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.2);
+            background: #d81b60; color: white; border: none; padding: 12px;
+            border-radius: 12px; font-weight: bold; font-size: 15px;
+            cursor: pointer; transition: 0.2s;
         }
-        .btn-kirim:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3);
-        }
-        .btn-kirim:active { transform: translateY(0); }
+        .btn-kirim:active { transform: scale(0.98); }
 
         /* Daftar Pesan */
-        .msg-list { display: flex; flex-direction: column; gap: 15px; }
-        
-        /* Animasi Pesan Masuk */
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.9) translateY(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
-        /* Animasi Pesan Keluar */
-        @keyframes popOut {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.9) translateY(-10px); height: 0; padding: 0; margin: 0; border: none; }
-        }
-
+        .msg-list { display: flex; flex-direction: column; gap: 10px; }
         .msg-box {
-            background: white; padding: 18px; border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.04); text-align: left;
-            position: relative; border-left: 5px solid #d81b60;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            transition: all 0.4s ease;
+            background: white; padding: 15px; border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;
+            position: relative;
         }
-        
-        .msg-box.removing {
-            animation: popOut 0.4s ease forwards;
-        }
-
-        .msg-name { font-weight: bold; color: #d81b60; font-size: 14px; display: block; margin-bottom: 5px;}
-        .msg-text { margin: 0; font-size: 14px; color: #5d4037; line-height: 1.5; }
-        
-        /* Tombol Hapus Cantik */
+        .msg-name { font-weight: bold; color: #d81b60; font-size: 14px; }
+        .msg-text { margin-top: 5px; font-size: 14px; color: #5d4037; }
         .btn-delete {
             position: absolute; right: 15px; top: 15px;
-            background: #fff0f3; color: #e91e63; border: none;
-            width: 30px; height: 30px; border-radius: 50%; font-size: 12px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s ease;
-        }
-        .btn-delete:hover {
-            background: #e91e63; color: white;
-            transform: scale(1.1);
+            background: #ffebee; color: #d81b60; border: none;
+            padding: 4px 10px; border-radius: 8px; font-size: 11px;
+            cursor: pointer;
         }
 
-        /* Pemutar Musik di Bawah Tengah */
+        /* Pemutar Musik di Bawah (Persis seperti Video) */
         .music-player {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             z-index: 2000; background: white; padding: 8px 20px;
@@ -186,7 +143,7 @@
         <div id="memories" class="page">
             <h2 style="text-align: center; color: #ad1457;">🌸 Our Memories 🌸</h2>
             <div class="card-foto">
-                <img src="foto_bersama1.jpg" alt="Foto Bersama 1">
+                <img src="foto_bersama1.jpg" alt="Foto Bersama">
             </div>
             <div class="card-foto">
                 <img src="foto_bersama2.jpg" alt="Foto Bersama 2">
@@ -207,9 +164,9 @@
             <h2 style="text-align: center; color: #ad1457;">💌 Message Board 💌</h2>
             
             <div class="message-form">
-                <input type="text" id="inputNama" placeholder="Siapa namamu? ✨" required>
-                <textarea id="inputPesan" rows="3" placeholder="Tulis pesan manis di sini... 💖" required></textarea>
-                <button class="btn-kirim" onclick="kirimPesan()">Kirim Pesan ✨</button>
+                <input type="text" id="inputNama" placeholder="Nama..." required>
+                <textarea id="inputPesan" rows="3" placeholder="Pesan..." required></textarea>
+                <button class="btn-kirim" onclick="kirimPesan()">Kirim</button>
             </div>
 
             <div class="msg-list" id="daftarPesan">
@@ -218,7 +175,7 @@
     </div>
 
     <script>
-        // YouTube API Setup
+        // 1. YouTube IFrame API Setup
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -230,7 +187,7 @@
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player-container', {
                 height: '0', width: '0',
-                videoId: 'gT9g1cW1H-4',
+                videoId: 'gT9g1cW1H-4', // ID Video Dewa 19 - Aku Milikmu
                 playerVars: {
                     'autoplay': 1,
                     'loop': 1,
@@ -239,8 +196,9 @@
             });
         }
 
+        // Jalankan musik saat ketukan pertama pada layar
         function handleFirstClick(e) {
-            spawnHeart(e);
+            spawnHeart(e); // Efek hati terbang
             if (player && !musicStarted) {
                 player.playVideo();
                 document.getElementById('play-pause').innerHTML = "⏸";
@@ -248,11 +206,12 @@
             }
         }
 
+        // Tombol Play/Pause Manual di Bagian Bawah
         function toggleMusic(e) {
-            e.stopPropagation();
+            e.stopPropagation(); // Menghindari klik menyebar ke layar utama
             if (player) {
                 var state = player.getPlayerState();
-                if (state === 1) {
+                if (state === 1) { 
                     player.pauseVideo();
                     document.getElementById('play-pause').innerHTML = "▶";
                 } else {
@@ -263,14 +222,17 @@
             }
         }
 
+        // Pindah Halaman
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            
             document.getElementById(pageId).classList.add('active-page');
             document.getElementById('nav-' + pageId).classList.add('active');
             window.scrollTo(0, 0);
         }
 
+        // Efek Hati Terbang
         function spawnHeart(e) {
             const heart = document.createElement('div');
             heart.className = 'click-heart';
@@ -281,8 +243,9 @@
             setTimeout(() => heart.remove(), 1200);
         }
 
+        // Format Hitungan Waktu Real-Time
         function updateCounter() {
-            const startDate = new Date("2024-01-01T00:00:00"); 
+            const startDate = new Date("2024-01-01T00:00:00"); // Ganti dengan tanggal jadian kalian
             const now = new Date();
             const diff = now - startDate;
 
@@ -297,7 +260,7 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // Guestbook logic
+        // Fitur Guestbook dengan Local Storage (Kirim & Hapus Dinamis)
         let messages = JSON.parse(localStorage.getItem('guestbook_messages')) || [
             { id: 'msg-default', name: 'frhan', text: 'I love u more 💖' }
         ];
@@ -312,7 +275,7 @@
                     boxPesan.id = msg.id;
                     boxPesan.innerHTML = `
                         <span class="msg-name">${msg.name}</span>
-                        <button class="btn-delete" onclick="hapusPesan(event, '${msg.id}')">🗑️</button>
+                        <button class="btn-delete" onclick="hapusPesan(event, '${msg.id}')">Hapus</button>
                         <p class="msg-text">${msg.text}</p>
                     `;
                     daftar.appendChild(boxPesan);
@@ -332,28 +295,28 @@
             const newId = 'msg-' + Date.now();
             const newMsg = { id: newId, name: nama, text: pesan };
 
+            // Taruh pesan baru di baris teratas list
             messages.unshift(newMsg);
             localStorage.setItem('guestbook_messages', JSON.stringify(messages));
             renderMessages();
 
+            // Bersihkan input
             document.getElementById("inputNama").value = "";
             document.getElementById("inputPesan").value = "";
         }
 
         function hapusPesan(event, id) {
-            event.stopPropagation();
-            const element = document.getElementById(id);
-            if (element) {
-                element.classList.add('removing');
-                setTimeout(() => {
-                    messages = messages.filter(msg => msg.id !== id);
-                    localStorage.setItem('guestbook_messages', JSON.stringify(messages));
-                    renderMessages();
-                }, 400);
-            }
+            event.stopPropagation(); // Hindari click menyebar ke body
+            
+            // Filter array pesan untuk membuang ID yang dihapus
+            messages = messages.filter(msg => msg.id !== id);
+            localStorage.setItem('guestbook_messages', JSON.stringify(messages));
+            renderMessages();
         }
 
+        // Tampilkan pesan saat pertama kali web dimuat
         renderMessages();
     </script>
 </body>
 </html>
+
