@@ -9,64 +9,53 @@
             margin: 0; padding: 0;
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
-            min-height: 100vh; text-align: center; color: #5d4037;
+            height: 100vh; display: flex; align-items: center; justify-content: center;
         }
 
-        /* Navigasi */
-        nav {
-            display: flex; justify-content: center; padding: 15px 0; gap: 20px;
-            background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 1000;
+        /* BOX PEMICU */
+        #welcome-overlay {
+            background: white; padding: 40px; border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
+            width: 85%; max-width: 400px;
         }
 
-        nav a { color: #5d4037; text-decoration: none; font-weight: 500; cursor: pointer; }
-
-        /* Welcome Overlay (Pemicu Musik) */
-        #overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 175, 189, 0.95);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 9999; transition: 0.5s;
-        }
-
-        .play-btn {
+        .btn-start {
             background: #d81b60; color: white; border: none;
-            padding: 15px 30px; border-radius: 50px; font-size: 18px;
-            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.4); cursor: pointer;
+            padding: 15px 30px; border-radius: 50px; font-size: 16px;
+            font-weight: bold; cursor: pointer; margin-top: 25px;
+            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+            transition: 0.3s;
         }
 
-        .counter-container {
-            background: white; padding: 25px; border-radius: 20px;
-            margin: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        /* KONTEN UTAMA (Tersembunyi di awal) */
+        #main-app { display: none; text-align: center; }
+        .counter-box {
+            background: white; padding: 20px; border-radius: 20px;
+            border: 2px dashed #ffafbd; margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <!-- TOMBOL PEMICU (WAJIB UNTUK HP) -->
-    <div id="overlay">
-        <h2 style="color: white; margin-bottom: 20px;">Welcome Home 🌸</h2>
-        <button class="play-btn" onclick="startEverything()">Mulai Kenangan ✨</button>
+    <!-- BOX AWAL DENGAN TOMBOL -->
+    <div id="welcome-overlay">
+        <h2 style="color: #d81b60;">Selamat Datang! 🌸</h2>
+        <p style="color: #666;">Klik tombol di bawah ini untuk melihat kenangan kita & mendengarkan lagu.</p>
+        <button class="btn-start" onclick="startApp()">Mulai Sekarang ✨</button>
     </div>
 
-    <!-- PLAYER YOUTUBE TERSEMBUNYI -->
-    <div id="youtube-player" style="display:none;">
-        <div id="player"></div>
-    </div>
-
-    <nav>
-        <a onclick="showPage('home')">Home</a>
-        <a onclick="showPage('memories')">Memories</a>
-    </nav>
-
-    <div class="container">
-        <div id="home" class="page">
-            <div class="counter-container">
-                <p>Waktu Bersama:</p>
-                <div id="days-counter" style="font-size: 22px; font-weight: bold; color: #d81b60;">Loading...</div>
-            </div>
+    <!-- KONTEN UTAMA -->
+    <div id="main-app">
+        <h1 style="color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.2);">Our Memories</h1>
+        <div class="counter-box">
+            <p style="margin: 0; color: #888;">Waktu Bersama:</p>
+            <div id="days-counter" style="font-size: 26px; font-weight: bold; color: #d81b60;">...</div>
         </div>
+        <p style="color: white; margin-top: 20px;">Semoga hari-harimu bahagia! 💖</p>
     </div>
+
+    <!-- PLAYER YOUTUBE (Tersembunyi) -->
+    <div id="player-container"></div>
 
     <script>
         // Load YouTube API
@@ -76,31 +65,33 @@
 
         var player;
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
+            player = new YT.Player('player-container', {
                 height: '0', width: '0',
                 videoId: 'gT9g1cW1H-4', // ID Lagu Aku Milikmu
-                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'gT9g1cW1H-4' }
+                playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'gT9g1cW1H-4' }
             });
         }
 
-        function startEverything() {
-            // Hilangkan overlay
-            document.getElementById('overlay').style.opacity = '0';
-            setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 500);
+        function startApp() {
+            // Sembunyikan box sambutan
+            document.getElementById('welcome-overlay').style.display = 'none';
+            // Tampilkan isi website
+            document.getElementById('main-app').style.display = 'block';
             
-            // Putar Musik
+            // Putar musik
             if (player) { player.playVideo(); }
             
+            // Mulai counter
+            setInterval(updateCounter, 1000);
             updateCounter();
         }
 
         function updateCounter() {
-            const startDate = new Date("2024-01-01"); 
+            const startDate = new Date("2024-01-01"); // Ganti tanggal jadianmu
             const diff = new Date() - startDate;
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            document.getElementById("days-counter").innerHTML = `${d} Hari Bersama`;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('days-counter').innerHTML = days + " Hari Bersama";
         }
-        setInterval(updateCounter, 1000);
     </script>
 </body>
 </html>
