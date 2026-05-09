@@ -239,6 +239,7 @@
             });
         }
 
+        // Jalankan musik setelah ketukan pertama di layar
         function handleFirstClick(e) {
             spawnHeart(e);
             if (player && !musicStarted) {
@@ -248,6 +249,7 @@
             }
         }
 
+        // Tombol manual Play / Pause di bagian bawah
         function toggleMusic(e) {
             e.stopPropagation();
             if (player) {
@@ -263,6 +265,7 @@
             }
         }
 
+        // Navigasi Pindah Halaman
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -271,6 +274,7 @@
             window.scrollTo(0, 0);
         }
 
+        // Efek Hati Terbang
         function spawnHeart(e) {
             const heart = document.createElement('div');
             heart.className = 'click-heart';
@@ -281,6 +285,7 @@
             setTimeout(() => heart.remove(), 1200);
         }
 
+        // Hitungan Waktu Jadian Real-time
         function updateCounter() {
             const startDate = new Date("2024-01-01T00:00:00"); 
             const now = new Date();
@@ -297,7 +302,7 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // Guestbook logic dengan Local Storage (Menjaga agar pesan tidak hilang saat di-refresh)
+        // Logika Guestbook / Message Board dengan Local Storage
         let messages = JSON.parse(localStorage.getItem('guestbook_messages')) || [
             { id: 'msg-default', name: 'frhan', text: 'I love u more 💖' }
         ];
@@ -349,10 +354,11 @@
                     messages = messages.filter(msg => msg.id !== id);
                     localStorage.setItem('guestbook_messages', JSON.stringify(messages));
                     renderMessages();
-                }, 400);
+                }, 400); // Sinkron dengan durasi animasi popOut (0.4s)
             }
         }
 
+        // Tampilkan daftar pesan saat halaman pertama dimuat
         renderMessages();
     </script>
 </body>
