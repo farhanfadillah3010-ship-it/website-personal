@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Pink Memories</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            color: #5d4037;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%23d81b60"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'), auto;
+        }
+
+        /* Navigasi */
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(216, 27, 96, 0.1);
+        }
+
+        nav a {
+            color: rgba(93, 64, 55, 0.8);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: 0.3s;
+        }
+
+        nav a.active {
+            color: #d81b60;
+            font-weight: bold;
+            border-bottom: 2px solid #d81b60;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { text-align: center; color: #ad1457; margin-bottom: 20px; }
+
+        /* Counter */
+        .counter-container {
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 30px 0;
+            border: 2px dashed #ffafbd;
+        }
+        .counter-time { font-size: 22px; font-weight: bold; color: #d81b60; margin-top: 10px; }
+
+        /* Memory Items */
+        .memory-item {
+            background: white; border-radius: 25px; padding: 15px; margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; z-index: 2;
+        }
+        .memory-item img { width: 100%; border-radius: 20px; display: block; }
+
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .gallery-card { aspect-ratio: 1/1; background: white; border-radius: 15px; overflow: hidden; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .gallery-card img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .music-btn {
+            background: #d81b60; color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; font-size: 16px; transition: 0.3s;
+        }
+        .file-label {
+            font-size: 10px;
+            background: #fce4ec;
+            padding: 2px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #d81b60;
+        }
+
+        /* Hearts & Flowers */
+        .click-heart { position: absolute; color: #d81b60; font-size: 20px; user-select: none; pointer-events: none; animation: heartFloat 1s ease-out forwards; z-index: 9999; }
+        @keyframes heartFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(1.5); opacity: 0; } }
+        .flower { position: fixed; top: -10%; z-index: 1; user-select: none; pointer-events: none; animation: fall linear forwards, sway ease-in-out infinite alternate; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+        @keyframes sway { from { margin-left: 0px; } to { margin-left: 50px; } }
+
+        /* Messages */
+        .message-bubble { background: white; padding: 15px; border-radius: 15px 15px 15px 0; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #d81b60; display: flex; justify-content: space-between; align-items: flex-start; }
+        .message-name { font-weight: bold; color: #d81b60; display: block; margin-bottom: 5px; }
+        .btn-delete { background: #ffebee; color: #d32f2f; border: none; padding: 5px 8px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+
+        @media (min-width: 768px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+    </style>
+</head>
+<body onclick="spawnHeart(event)">
+
+    <!-- MUSIC PLAYER -->
+    <div class="music-player">
+        <button class="music-btn" id="play-pause" onclick="toggleMusic()">▶</button>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 12px; font-weight: bold;" id="song-title">Pilih Lagu 🎵</span>
+            <label for="audio-upload" class="file-label">Upload MP3</label>
+            <input type="file" id="audio-upload" accept="audio/*" style="display: none;" onchange="loadAudio(event)">
+        </div>
+        <audio id="myAudio" loop></audio>
+    </div>
+
+    <nav>
+        <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+        <a onclick="showPage('memories')" id="nav-memories">Memories</a>
+        <a onclick="showPage('gallery')" id="nav-gallery">Gallery</a>
+        <a onclick="showPage('message')" id="nav-message">Message</a>
+    </nav>
+
+    <div class="container">
+        <!-- HOME PAGE -->
+        <div id="home" class="page active-page">
+            <h2>Welcome Home 🌸</h2>
+            <div class="counter-container">
+                <p style="margin: 0; font-size: 14px; color: #888;">Waktu Yang Kita Jalani:</p>
+                <div id="days-counter" class="counter-time">Menghitung...</div>
+            </div>
+        </div>
+
+        <!-- MEMORIES PAGE -->
+        <div id="memories" class="page">
+            <h2>🌸 Our Memories 🌸</h2>
+            <div class="memory-item"><img src="https://lh3.googleusercontent.com/d/1g2pgBH5rWrQCvvwa_mC0xtXSaLYLHQ5G"></div>
+            <div class="memory-item"><img src="https://lh3.googleusercontent.com/d/1QstwHNuQwgq2dY0VFT2m6uKq0ijCRJ1k"></div>
+        </div>
+
+        <!-- GALLERY PAGE -->
+        <div id="gallery" class="page">
+            <h2>✨ Photo Gallery ✨</h2>
+            <div class="gallery-grid">
+                <div class="gallery-card"><img src="https://lh3.googleusercontent.com/d/1adINXuCVQpkml7P_7nbnswma7nd8RSaH"></div>
+                <div class="gallery-card"><img src="https://lh3.googleusercontent.com/d/1T4TMeVBDRbrR6dFZapepQ6jJAQxKVyOH"></div>
+                <div class="gallery-card"><img src="https://lh3.googleusercontent.com/d/1csrmhxbQqf54U0MNRQ2vt6HT2NYw44Vh"></div>
+            </div>
+        </div>
+
+        <!-- MESSAGE PAGE -->
+        <div id="message" class="page">
+            <h2>💌 Message Board 💌</h2>
+            <div style="background:white; padding:20px; border-radius:20px; margin-bottom:20px;">
+                <input type="text" id="sender-name" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ffafbd; border-radius:10px;" placeholder="Nama...">
+                <textarea id="sender-message" style="width:100%; padding:10px; border:1px solid #ffafbd; border-radius:10px;" rows="3" placeholder="Pesan..."></textarea>
+                <button style="background:#d81b60; color:white; border:none; padding:10px; border-radius:10px; width:100%; margin-top:10px; cursor:pointer;" onclick="addMessage()">Kirim</button>
+            </div>
+            <div id="list-messages"></div>
+        </div>
+    </div>
+
+    <script>
+        let flowerInterval;
+        const audio = document.getElementById("myAudio");
+        const btn = document.getElementById("play-pause");
+
+        // --- NAVIGASI ---
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active-page');
+            document.getElementById('nav-' + pageId).classList.add('active');
+            if (pageId === 'memories') startFlowers(); else stopFlowers();
+            window.scrollTo(0, 0);
+        }
+
+        // --- MUSIK (UPLOAD & PLAY) ---
+        function loadAudio(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                audio.src = url;
+                document.getElementById('song-title').innerText = file.name.substring(0, 15) + "...";
+                audio.play();
+                btn.innerHTML = "⏸";
+            }
+        }
+
+        function toggleMusic() {
+            if (!audio.src) return alert("Pilih lagu dulu lewat tombol Upload!");
+            if (audio.paused) { audio.play(); btn.innerHTML = "⏸"; } 
+            else { audio.pause(); btn.innerHTML = "▶"; }
+        }
+
+        // --- EFEK KLIK ---
+        function spawnHeart(e) {
+            const heart = document.createElement('div');
+            heart.className = 'click-heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = e.pageX + 'px';
+            heart.style.top = e.pageY + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1000);
+        }
+
+        // --- COUNTER (Sesuaikan Tanggalmu) ---
+        function updateCounter() {
+            const startDate = new Date("2024-01-01"); // <--- GANTI TANGGAL JADIAN DISINI
+            const diff = new Date() - startDate;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            document.getElementById("days-counter").innerHTML = `${d} Hari, ${h}j ${m}m ${s}d`;
+        }
+        setInterval(updateCounter, 1000);
+
+        // --- BUNGA ---
+        function createFlower() {
+            const f = document.createElement('div');
+            f.className = 'flower';
+            f.innerText = ['🌸', '✨', '💕', '🌷', '🌺'][Math.floor(Math.random() * 5)];
+            f.style.left = Math.random() * 100 + 'vw';
+            f.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            f.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            document.body.appendChild(f);
+            setTimeout(() => f.remove(), 5000);
+        }
+        function startFlowers() { if(!flowerInterval) flowerInterval = setInterval(createFlower, 150); }
+        function stopFlowers() { clearInterval(flowerInterval); flowerInterval = null; document.querySelectorAll('.flower').forEach(f => f.remove()); }
+
+        // --- PESAN ---
+        function addMessage() {
+            const n = document.getElementById('sender-name').value;
+            const m = document.getElementById('sender-message').value;
+            if(!n || !m) return;
+            const msg = { id: Date.now(), name: n, text: m };
+            let msgs = JSON.parse(localStorage.getItem('pinkMsgs')) || [];
+            msgs.unshift(msg);
+            localStorage.setItem('pinkMsgs', JSON.stringify(msgs));
+            document.getElementById('sender-name').value = "";
+            document.getElementById('sender-message').value = "";
+            loadMessages();
+        }
+        function deleteMsg(id) {
+            let msgs = JSON.parse(localStorage.getItem('pinkMsgs')).filter(x => x.id !== id);
+            localStorage.setItem('pinkMsgs', JSON.stringify(msgs));
+            loadMessages();
+        }
+        function loadMessages() {
+            const list = document.getElementById('list-messages');
+            const msgs = JSON.parse(localStorage.getItem('pinkMsgs')) || [];
+            list.innerHTML = msgs.map(x => `
+                <div class="message-bubble">
+                    <div><span class="message-name">${x.name}</span>${x.text}</div>
+                    <button class="btn-delete" onclick="deleteMsg(${x.id})">Hapus</button>
+                </div>
+            `).join('');
+        }
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>
