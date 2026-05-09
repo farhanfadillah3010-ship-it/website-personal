@@ -10,7 +10,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
             color: #5d4037; min-height: 100vh; overflow-x: hidden;
-            padding-bottom: 80px; /* Jarak agar tidak tertutup player di bawah */
+            padding-bottom: 90px;
         }
 
         /* Navigasi */
@@ -185,7 +185,6 @@
 
         <div id="memories" class="page">
             <h2 style="text-align: center; color: #ad1457;">🌸 Our Memories 🌸</h2>
-            
             <div class="card-foto">
                 <img src="foto_bersama1.jpg" alt="Foto Bersama 1">
             </div>
@@ -219,7 +218,7 @@
     </div>
 
     <script>
-        // YouTube IFrame API Setup (Pemutar Lagu Tanpa Upload .mp3)
+        // YouTube API Setup
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -231,7 +230,7 @@
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player-container', {
                 height: '0', width: '0',
-                videoId: 'gT9g1cW1H-4', // ID Video Dewa 19 - Aku Milikmu
+                videoId: 'gT9g1cW1H-4',
                 playerVars: {
                     'autoplay': 1,
                     'loop': 1,
@@ -240,10 +239,8 @@
             });
         }
 
-        // Jalankan lagu saat pengguna pertama kali menyentuh layar di mana saja
         function handleFirstClick(e) {
-            spawnHeart(e); // Efek hati terbang
-            
+            spawnHeart(e);
             if (player && !musicStarted) {
                 player.playVideo();
                 document.getElementById('play-pause').innerHTML = "⏸";
@@ -251,12 +248,11 @@
             }
         }
 
-        // Tombol Play/Pause Manual di Bagian Bawah
         function toggleMusic(e) {
-            e.stopPropagation(); // Mencegah bentrok dengan klik layar utama
+            e.stopPropagation();
             if (player) {
                 var state = player.getPlayerState();
-                if (state === 1) { // Sedang berputar (Playing)
+                if (state === 1) {
                     player.pauseVideo();
                     document.getElementById('play-pause').innerHTML = "▶";
                 } else {
@@ -267,17 +263,14 @@
             }
         }
 
-        // Fungsi Ganti Halaman
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            
             document.getElementById(pageId).classList.add('active-page');
             document.getElementById('nav-' + pageId).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        // Efek Hati Terbang
         function spawnHeart(e) {
             const heart = document.createElement('div');
             heart.className = 'click-heart';
@@ -288,9 +281,8 @@
             setTimeout(() => heart.remove(), 1200);
         }
 
-        // Format Hitungan Waktu Real-Time (Hari, Jam, Menit, Detik)
         function updateCounter() {
-            const startDate = new Date("2024-01-01T00:00:00"); // Ubah ke tanggal jadianmu
+            const startDate = new Date("2024-01-01T00:00:00"); 
             const now = new Date();
             const diff = now - startDate;
 
@@ -305,25 +297,27 @@
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // Fitur Pesan Dinamis (Penyimpanan Local Storage agar tidak hilang saat di-refresh)
+        // Guestbook logic
         let messages = JSON.parse(localStorage.getItem('guestbook_messages')) || [
             { id: 'msg-default', name: 'frhan', text: 'I love u more 💖' }
         ];
 
         function renderMessages() {
             const daftar = document.getElementById("daftarPesan");
-            daftar.innerHTML = "";
-            messages.forEach(msg => {
-                const boxPesan = document.createElement('div');
-                boxPesan.className = 'msg-box';
-                boxPesan.id = msg.id;
-                boxPesan.innerHTML = `
-                    <span class="msg-name">${msg.name}</span>
-                    <button class="btn-delete" onclick="hapusPesan(event, '${msg.id}')">🗑️</button>
-                    <p class="msg-text">${msg.text}</p>
-                `;
-                daftar.appendChild(boxPesan);
-            });
+            if(daftar) {
+                daftar.innerHTML = "";
+                messages.forEach(msg => {
+                    const boxPesan = document.createElement('div');
+                    boxPesan.className = 'msg-box';
+                    boxPesan.id = msg.id;
+                    boxPesan.innerHTML = `
+                        <span class="msg-name">${msg.name}</span>
+                        <button class="btn-delete" onclick="hapusPesan(event, '${msg.id}')">🗑️</button>
+                        <p class="msg-text">${msg.text}</p>
+                    `;
+                    daftar.appendChild(boxPesan);
+                });
+            }
         }
 
         function kirimPesan() {
@@ -338,26 +332,19 @@
             const newId = 'msg-' + Date.now();
             const newMsg = { id: newId, name: nama, text: pesan };
 
-            // Tambahkan pesan ke paling atas list data
             messages.unshift(newMsg);
             localStorage.setItem('guestbook_messages', JSON.stringify(messages));
-
-            // Render ulang tampilan
             renderMessages();
 
-            // Reset Input
             document.getElementById("inputNama").value = "";
             document.getElementById("inputPesan").value = "";
         }
 
         function hapusPesan(event, id) {
-            event.stopPropagation(); // Biar tidak memicu click heart di body
+            event.stopPropagation();
             const element = document.getElementById(id);
             if (element) {
-                // Beri kelas animasi keluar dahulu
                 element.classList.add('removing');
-                
-                // Hapus data asli dari array dan penyimpanan setelah transisi selesai (400ms)
                 setTimeout(() => {
                     messages = messages.filter(msg => msg.id !== id);
                     localStorage.setItem('guestbook_messages', JSON.stringify(messages));
@@ -366,7 +353,6 @@
             }
         }
 
-        // Muat pesan pertama kali saat membuka website
         renderMessages();
     </script>
 </body>
